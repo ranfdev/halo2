@@ -267,9 +267,12 @@
                   file? (send-response-file stream response)
                   body-stream? (send-response-body-stream stream response)
                   bytes? (send-response stream response)
-                  :default (send-response stream {:status 500
-                                                  :body (get status-messages 500)
-                                                  :headers {"Content-Type" "text/plain"}}))))
+                  :default (do 
+                            (send-response stream 
+                              {:status 500
+                                :body (get status-messages 500)
+                                :headers {"Content-Type" "text/plain"}})
+                            (error "Response body must be bytes or a fiber stream")))))
 
             # close connection right away if Connection: close
             (when (close-connection? request)
